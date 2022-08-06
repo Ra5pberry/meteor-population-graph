@@ -1,31 +1,27 @@
 import { Meteor } from 'meteor/meteor';
-import { LinksCollection } from '/imports/api/links';
+import { PrefData } from '/common/Interfaces';
+import { PrefsCollection } from '/imports/api/PrefsCollection';
+import axios from '/plugins/axios';
 
-function insertLink(title: string, url: string) {
-  LinksCollection.insert({ title, url, createdAt: new Date() });
-}
+const insertPref = (prefData: PrefData, index: string) => PrefsCollection.insert({
+  _id: index,
+  prefCode: prefData.prefCode,
+  prefName: prefData.prefName,
+});
 
 Meteor.startup(() => {
-  // If the Links collection is empty, add some data.
-  if (LinksCollection.find().count() === 0) {
-    insertLink(
-      'Do the Tutorial',
-      'https://www.meteor.com/tutorials/react/creating-an-app'
-    );
-
-    insertLink(
-      'Follow the Guide',
-      'http://guide.meteor.com'
-    );
-
-    insertLink(
-      'Read the Docs',
-      'https://docs.meteor.com'
-    );
-
-    insertLink(
-      'Discussions',
-      'https://forums.meteor.com'
-    );
+  if (PrefsCollection.find().count() === 0) {
+    axios
+    .get('/api/v1/prefectures')
+    .then((res) => {
+      for (const [key, data] of Object.entries(res.data.result)) {
+        console.log(typeof(key));
+        console.log(data);
+        insertPref(data as PrefData, key);
+      }
+    })
+    .catch((e) => {
+      console.log(e);
+    });
   }
 });

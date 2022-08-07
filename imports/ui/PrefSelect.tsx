@@ -7,16 +7,14 @@ export const PrefSelect = () => {
 
   const prefData = useTracker(() => PrefsCollection.find({}).fetch());
 
-  console.log(prefData);
-
   return (
     <>
-    <div>
+    <div className='div-header'>
       <p>都道府県</p>
     </div>
-    <div>
+    <div className='select-wrapper'>
       {
-        prefData.map(data => <Checkbox key={ data._id } data={ data } />)
+        prefData.map(data => <Checkbox key={ data._id } prefData={ data } />)
       }
     </div>
     </>

@@ -12,6 +12,13 @@ const insertPref = (prefData: PrefData, index: string) => PrefsCollection.insert
   isChecked: false,
 });
 
+const insertPopulation = (prefData, data) => PopulationCollection.insert({
+  prefId: prefData._id,
+  prefName: prefData.prefName,
+  population: data.value,
+  year: data.year,
+});
+
 Meteor.startup(() => {
   PrefsCollection.rawCollection().drop();
 
@@ -22,6 +29,25 @@ Meteor.startup(() => {
       for (const [key, data] of Object.entries(res.data.result)) {
         insertPref(data as PrefData, key);
       }
+
+      PrefsCollection.find().forEach((prefData) => {
+        axios
+        .get('/api/v1/population/composition/perYear', {
+          params: {
+            prefCode: prefData.prefCode,
+            cityCode: '-',
+          },
+        })
+        .then((res) => {
+          for (const [key, val] of Object.entries(res.data.result)) {
+            if (Array.isArray(val)) {
+              val[0].data.forEach((data) => {
+                insertPopulation(prefData, data);
+              });
+            }
+          }
+        })
+      })
     })
     .catch((e) => {
       console.log(e);
@@ -30,12 +56,4 @@ Meteor.startup(() => {
 });
 
 onPageLoad(() => {
-  PopulationCollection.rawCollection().drop();
-  PrefsCollection.find({}).forEach(data => {
-    PrefsCollection.update(data._id, {
-      $set: {
-        isChecked: false,
-      }
-    })
-  })
 })

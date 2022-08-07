@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { onPageLoad } from 'meteor/server-render';
 import { PrefData } from '/common/Interfaces';
 import { PopulationCollection } from '/imports/api/PopulationCollection';
 import { PrefsCollection } from '/imports/api/PrefsCollection';
@@ -13,7 +14,6 @@ const insertPref = (prefData: PrefData, index: string) => PrefsCollection.insert
 
 Meteor.startup(() => {
   PrefsCollection.rawCollection().drop();
-  PopulationCollection.rawCollection().drop();
 
   if (PrefsCollection.find().count() === 0) {
     axios
@@ -28,3 +28,14 @@ Meteor.startup(() => {
     });
   }
 });
+
+onPageLoad(() => {
+  PopulationCollection.rawCollection().drop();
+  PrefsCollection.find({}).forEach(data => {
+    PrefsCollection.update(data._id, {
+      $set: {
+        isChecked: false,
+      }
+    })
+  })
+})

@@ -61,7 +61,6 @@ Meteor.startup(() => {
 
 Meteor.methods({
   getPopulation(prefs) {
-    console.log('called');
     let res = [];
     prefs.forEach((prefCode) => {
       var colorSet = `${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}`;

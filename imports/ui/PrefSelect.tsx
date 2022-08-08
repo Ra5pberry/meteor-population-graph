@@ -10,7 +10,7 @@ export const PrefSelect = () => {
   return (
     <>
     <div className='div-header'>
-      <p>都道府県</p>
+      <p>都道府県別人口推移グラフ</p>
     </div>
     <div className='select-wrapper'>
       {

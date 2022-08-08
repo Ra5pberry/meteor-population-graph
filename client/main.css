@@ -34,7 +34,7 @@ body {
 
 .div-header p {
   margin: 20px;
-  text-align: justify;
+  text-align: center;
 }
 
 .pref-select {
@@ -76,4 +76,32 @@ body {
 
 .population-graph {
   width: 100%;
+}
+
+button.update-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+  padding: 1em 2em;
+  width: 300px;
+  color: aliceblue;
+  font-size: 18px;
+  font-weight: 700;
+  background-color: darkcyan;
+  border-radius: 50vh;
+}
+
+.update-btn ::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-top: 3px solid aliceblue;
+  border-right: 3px solid aliceblue;
+  transform: rotate(135deg);
+}
+
+.update-btn :hover {
+  text-decoration: none;
+  background-color: cadetblue;
 }

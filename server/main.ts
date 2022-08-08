@@ -1,8 +1,10 @@
 import { Meteor } from 'meteor/meteor';
-import { onPageLoad } from 'meteor/server-render';
+
 import { PrefData } from '/common/Interfaces';
+
 import { PopulationCollection } from '/imports/api/PopulationCollection';
 import { PrefsCollection } from '/imports/api/PrefsCollection';
+
 import axios from '/plugins/axios';
 
 const insertPref = (prefData: PrefData, index: string) => PrefsCollection.insert({
@@ -14,6 +16,7 @@ const insertPref = (prefData: PrefData, index: string) => PrefsCollection.insert
 
 const insertPopulation = (prefData, data) => PopulationCollection.insert({
   prefId: prefData._id,
+  prefCode: prefData.prefCode,
   prefName: prefData.prefName,
   population: data.value,
   year: data.year,
@@ -21,6 +24,7 @@ const insertPopulation = (prefData, data) => PopulationCollection.insert({
 
 Meteor.startup(() => {
   PrefsCollection.rawCollection().drop();
+  PopulationCollection.rawCollection().drop();
 
   if (PrefsCollection.find().count() === 0) {
     axios
@@ -55,5 +59,26 @@ Meteor.startup(() => {
   }
 });
 
-onPageLoad(() => {
-})
+Meteor.methods({
+  getPopulation(prefs) {
+    console.log('called');
+    let res = [];
+    prefs.forEach((prefCode) => {
+      var colorSet = `${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}`;
+      var dataset = {
+        label: PrefsCollection.findOne({ prefCode: prefCode }).prefName,
+        data: [0],
+        borderColor: `rgb(${colorSet})`,
+        backgroundColor: `rgb(${colorSet}, 0.5)`
+      };
+      var data: number[] = [];
+      PopulationCollection.find({ prefCode: prefCode }, { sort: { year: 1 } }).forEach((populationData) => {
+        data.push(populationData.population);
+      });
+      dataset.data = data;
+      res.push(dataset);
+    });
+
+    return res;
+  },
+});

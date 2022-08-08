@@ -14,10 +14,7 @@ Meteor.startup(() => {
 
 const btnEle = document.getElementById('re-render');
 btnEle.onclick = (e) => {
-  console.log('pressed');
   Meteor.call('getPopulation', selectedPrefs, (error, result) => {
-    console.log(result);
-    console.log('pope');
     datasets = result;
     render(<PopulationGraph />, document.getElementById('graph-target'));
   });
